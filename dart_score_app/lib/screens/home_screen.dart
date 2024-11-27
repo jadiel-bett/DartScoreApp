@@ -20,7 +20,7 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dart Scoring MVP'),
+        title: const Text('Dart Scoring App'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
