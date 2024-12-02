@@ -17,6 +17,13 @@ class GameScreen extends StatelessWidget {
         builder: (context, gameProvider, child) {
           return Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Game Mode: ${gameProvider.gameMode.name}',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: gameProvider.players.length,
@@ -31,8 +38,9 @@ class GameScreen extends StatelessWidget {
                           child: Text('${index + 1}'),
                         ),
                         title: Text(player.name,
-                            style: Theme.of(context).textTheme.displayMedium),
-                        subtitle: Text('Total Score: ${player.totalScore}'),
+                            style: Theme.of(context).textTheme.headlineMedium),
+                        subtitle:
+                            Text(gameProvider.gameMode.getPlayerStatus(player)),
                         trailing: Text(
                           player.scores.isNotEmpty
                               ? player.scores.last.toString()
