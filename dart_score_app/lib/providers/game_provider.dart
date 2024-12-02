@@ -1,15 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'dart:math';
+import '../models/game_modes.dart';
 
 class GameProvider with ChangeNotifier {
   List<Player> players = [];
   bool isGameActive = false;
   int currentPlayerIndex = 0;
   Timer? gameTimer;
+  GameMode gameMode = BasicMode();
 
-  void startGame(List<String> playerNames) {
-    players = playerNames.map((name) => Player(name)).toList();
+  void startGame(List<String> playerNames, GameMode mode) {
+    gameMode = mode;
+    players = playerNames
+        .map((name) => Player(name, initialScore: mode is Mode501 ? 501 : 0))
+        .toList();
     isGameActive = true;
     currentPlayerIndex = 0;
     notifyListeners();
@@ -25,8 +30,12 @@ class GameProvider with ChangeNotifier {
   void simulateThrow() {
     if (players.isNotEmpty) {
       int score = Random().nextInt(60) + 1; // Random score between 1 and 60
-      players[currentPlayerIndex].addScore(score);
-      currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+      gameMode.processThrow(players[currentPlayerIndex], score);
+      if (gameMode.isGameOver(players)) {
+        endGame();
+      } else {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+      }
       notifyListeners();
     }
   }
@@ -46,12 +55,17 @@ class GameProvider with ChangeNotifier {
 class Player {
   final String name;
   List<int> scores = [];
+  int totalScore;
 
-  Player(this.name);
+  Player(this.name, {int initialScore = 0}) : totalScore = initialScore;
 
   void addScore(int score) {
     scores.add(score);
+    totalScore += score;
   }
 
-  int get totalScore => scores.fold(0, (sum, score) => sum + score);
+  void subtractScore(int score) {
+    scores.add(score);
+    totalScore -= score;
+  }
 }
