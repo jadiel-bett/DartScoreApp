@@ -38,7 +38,17 @@ class RegisterScreenState extends State<RegisterScreen> {
                   fillColor: Colors.white10,
                 ),
                 style: const TextStyle(color: Colors.white),
-                validator: (value) => value!.isEmpty ? 'Enter an email' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Enter an email';
+                  }
+                  final emailRegExp =
+                      RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                  if (!emailRegExp.hasMatch(value)) {
+                    return 'Enter a valid email address';
+                  }
+                  return null;
+                },
                 onSaved: (value) => _email = value!,
               ),
               const SizedBox(height: 16),
